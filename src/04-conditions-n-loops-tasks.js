@@ -6,6 +6,8 @@
  *                                                                                                *
  ************************************************************************************************ */
 
+const { findAllOccurrences } = require('./03-arrays-tasks');
+
 
 /**
  * Returns the 'Fizz','Buzz' or an original number using the following rules:
@@ -219,8 +221,8 @@ function getIntervalString(/* a, b, isStartIncluded, isEndIncluded */) {
  * 'rotator' => 'rotator'
  * 'noon' => 'noon'
  */
-function reverseString(/* str */) {
-  throw new Error('Not implemented');
+function reverseString(str) {
+  return str.slice(-1, 1);
 }
 
 
@@ -279,8 +281,13 @@ function isCreditCardNumber(/* ccn */) {
  *   10000 ( 1+0+0+0+0 = 1 ) => 1
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
-function getDigitalRoot(/* num */) {
-  throw new Error('Not implemented');
+function getDigitalRoot(num) {
+  let result = 0;
+  const string = num.toString();
+  for (let i = 0; i <= string.length - 1; i += 1) {
+    result += parseInt(string[i], 10);
+  }
+  return result > 9 ? getDigitalRoot(result) : result;
 }
 
 
@@ -405,8 +412,18 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  let result;
+  for (let i = 0; i <= position.length - 1; i += 1) {
+    if (findAllOccurrences(position[i], 'X') === 3) {
+      result = 'X';
+      break;
+    } else if (findAllOccurrences(position[i], '0') === 3) {
+      result = '0';
+      break;
+    }
+  }
+  return result;
 }
 
 

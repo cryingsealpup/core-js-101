@@ -205,13 +205,10 @@ function extractEmails(str) {
  */
 function getRectangleString(width, height) {
   const arr = ['┌'.concat('─'.repeat(width - 2), '┐\n')];
-  for (let i = 0; i < height - 1; i += 1) {
-    arr.push('|'.concat(' '.repeat(width - 2), '|\n'));
-    if (i === height - 1) {
-      arr.push('└'.concat('─'.repeat(width - 2), '┘\n'));
-    }
+  for (let i = 0; i < height - 2; i += 1) {
+    arr.push('│'.concat(' '.repeat(width - 2), '│\n'));
   }
-  console.log(arr);
+  arr.push('└'.concat('─'.repeat(width - 2), '┘\n'));
   return arr.join('');
 }
 
@@ -232,8 +229,10 @@ function getRectangleString(width, height) {
  *    => 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm'
  *
  */
-function encodeToRot13(/* str */) {
-  throw new Error('Not implemented');
+function encodeToRot13(str) {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz !?.,';
+  const revertedAlphabet = 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm !?.,';
+  return str.split('').map((el) => alphabet[revertedAlphabet.indexOf(el)]).join('');
 }
 
 /**
@@ -249,8 +248,11 @@ function encodeToRot13(/* str */) {
  *   isString('test') => true
  *   isString(new String('test')) => true
  */
-function isString(/* value */) {
-  throw new Error('Not implemented');
+function isString(value) {
+  if (value === null || value === undefined) {
+    return false;
+  }
+  return typeof value.valueOf() === 'string';
 }
 
 
@@ -278,8 +280,13 @@ function isString(/* value */) {
  *   'Q♠' => 50
  *   'K♠' => 51
  */
-function getCardId(/* value */) {
-  throw new Error('Not implemented');
+function getCardId(value) {
+  const desk = ['A♣', '2♣', '3♣', '4♣', '5♣', '6♣', '7♣', '8♣', '9♣', '10♣', 'J♣', 'Q♣', 'K♣',
+    'A♦', '2♦', '3♦', '4♦', '5♦', '6♦', '7♦', '8♦', '9♦', '10♦', 'J♦', 'Q♦', 'K♦',
+    'A♥', '2♥', '3♥', '4♥', '5♥', '6♥', '7♥', '8♥', '9♥', '10♥', 'J♥', 'Q♥', 'K♥',
+    'A♠', '2♠', '3♠', '4♠', '5♠', '6♠', '7♠', '8♠', '9♠', '10♠', 'J♠', 'Q♠', 'K♠',
+  ];
+  return desk.indexOf(value);
 }
 
 
