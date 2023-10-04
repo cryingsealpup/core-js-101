@@ -6,9 +6,6 @@
  *                                                                                                *
  ************************************************************************************************ */
 
-const { findAllOccurrences } = require('./03-arrays-tasks');
-
-
 /**
  * Returns the 'Fizz','Buzz' or an original number using the following rules:
  * 1) return original number
@@ -131,8 +128,8 @@ function isTriangle(a, b, c) {
  *   { top:20, left:20, width: 20, height: 20 }    =>  false
  *
  */
-function doRectanglesOverlap(/* rect1, rect2 */) {
-  throw new Error('Not implemented');
+function doRectanglesOverlap(rect1, rect2) {
+  return rect1.width >= rect2.left && rect1.height >= rect2.top;
 }
 
 
@@ -162,8 +159,10 @@ function doRectanglesOverlap(/* rect1, rect2 */) {
  *   { center: { x:0, y:0 }, radius:10 },  { x:10, y:10 }   => false
  *
  */
-function isInsideCircle(/* circle, point */) {
-  throw new Error('Not implemented');
+function isInsideCircle(circle, point) {
+  const x = point.x - circle.center.x;
+  const y = point.y - circle.center.y;
+  return x * x + y * y < circle.radius * circle.radius;
 }
 
 
@@ -178,8 +177,14 @@ function isInsideCircle(/* circle, point */) {
  *   'abracadabra'  => 'c'
  *   'entente' => null
  */
-function findFirstSingleChar(/* str */) {
-  throw new Error('Not implemented');
+function findFirstSingleChar(str) {
+  for (let i = 0; i < str.length; i += 1) {
+    const ind = str.indexOf(str[i]);
+    if (!str.slice(ind + 1, str.length).includes(str[i]) && !str.slice(0, ind).includes(str[i])) {
+      return str[i];
+    }
+  }
+  return null;
 }
 
 
@@ -206,9 +211,11 @@ function findFirstSingleChar(/* str */) {
  *
  */
 function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
-  const start = isStartIncluded ? '[' : ')';
-  const end = isEndIncluded ? '[' : ')';
-  return start.concat(a, ', ', b, end);
+  const start = isStartIncluded ? '[' : '(';
+  const end = isEndIncluded ? ']' : ')';
+  const first = a >= b ? b : a;
+  const last = a >= b ? a : b;
+  return start.concat(first, ', ', last, end);
 }
 
 
@@ -266,8 +273,20 @@ function reverseInteger(num) {
  *   5436468789016589 => false
  *   4916123456789012 => false
  */
-function isCreditCardNumber(/* ccn */) {
-  throw new Error('Not implemented');
+function isCreditCardNumber(ccn) {
+  const ccnArray = ccn.toString().split('');
+  const evenness = ccnArray.length % 2;
+  const result = ccnArray.reduce((acc, curr, ind) => {
+    let temp = parseInt(curr, 10);
+    if (ind % 2 === evenness) {
+      temp *= 2;
+      if (temp > 9) {
+        temp -= 9;
+      }
+    }
+    return acc + temp;
+  }, 0);
+  return result % 10 === 0;
 }
 
 /**
@@ -294,6 +313,24 @@ function getDigitalRoot(num) {
 }
 
 
+function countOccur(str, e) {
+  return str.split('').reduce((acc, c, i) => {
+    if (e[0] === c && acc[1] % 2 === 0) {
+      acc[0] += 1;
+      if (e[0] === e[1]) {
+        acc[0] -= 1;
+      }
+    } else if ((e[1] === c || e[1] === e[0]) && i < str.length && acc[0] > 0 && acc[1] % 2 === 0) {
+      acc[0] -= 1;
+    } else if (!e.includes(c)) {
+      acc[1] += 1;
+    } else {
+      acc[2] += 1;
+    }
+    return acc;
+  }, [0, 0, 0]);
+}
+
 /**
  * Returns true if the specified string has the balanced brackets and false otherwise.
  * Balanced means that is, whether it consists entirely of pairs of opening/closing brackets
@@ -315,8 +352,16 @@ function getDigitalRoot(num) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  let flag = true;
+  const config = [['(', ')'], ['[', ']'], ['{', '}'], ['<', '>']];
+  config.forEach((element) => {
+    const occurs = countOccur(str, element, config);
+    if (occurs[0] > 0 || occurs[2] % 2 !== 0) {
+      flag = false;
+    }
+  });
+  return flag;
 }
 
 
@@ -340,8 +385,8 @@ function isBracketsBalanced(/* str */) {
  *    365, 4  => '11231'
  *    365, 10 => '365'
  */
-function toNaryString(/* num, n */) {
-  throw new Error('Not implemented');
+function toNaryString(num, n) {
+  return num.toString(n);
 }
 
 
@@ -357,8 +402,26 @@ function toNaryString(/* num, n */) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  const pathArray = pathes[0].split('/');
+  let path = pathArray.slice(0, pathArray.length - 1).join('/').concat('/');
+  let counter = 0;
+  for (let j = 0; j < pathArray.length + 1; j += 1) {
+    for (let i = 0; i < pathes.length; i += 1) {
+      if (pathes[i].includes(path) && path !== '/') {
+        counter += 1;
+      } else if (path === '/' && pathes[i][0] === '/') {
+        counter += 1;
+      }
+    }
+    if (counter < pathes.length) {
+      path = pathArray.slice(0, pathArray.length - j).join('/').concat('/');
+      counter = 0;
+    } else {
+      break;
+    }
+  }
+  return counter === pathes.length ? path : '';
 }
 
 
@@ -380,8 +443,10 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const getValue = (el, ind, arr2) => el * arr2[ind];
+
+  return typeof m1[0] !== 'object' ? m1.map((el, ind) => getValue(el, ind, m2)) : m1.map((v, i) => v.map((el, ind) => el * m2[i][ind]));
 }
 
 
@@ -416,17 +481,22 @@ function getMatrixProduct(/* m1, m2 */) {
  *
  */
 function evaluateTicTacToePosition(position) {
-  let result;
-  for (let i = 0; i <= position.length - 1; i += 1) {
-    if (findAllOccurrences(position[i], 'X') === 3) {
-      result = 'X';
-      break;
-    } else if (findAllOccurrences(position[i], '0') === 3) {
-      result = '0';
-      break;
-    }
-  }
-  return result;
+  const x = position;
+  const flag1 = x[0][0] === x[1][1] === x[2][2] || x[0][0] === x[1][0] === x[2][0];
+  const flag2 = x[0][1] === x[1][1] === x[2][1] || x[0][2] === x[1][2] === x[2][2];
+  const flag3 = x[0][2] === x[1][1] === x[2][0] || x[0][0] === x[0][1] === x[0][2];
+  // const counter = 0;
+  // position.forEach((el, ind) => {
+  //   el.forEach((val, i) => {
+
+  //   })
+  // })
+  // for (let i = 0; i <= position.length - 1; i += 1) {
+  //   for (let j = 0; j <= position[0].length - 1; j += 1) {
+
+  //   }
+  // }
+  return flag1 || flag2 || flag3 ? x[0][0] : undefined;
 }
 
 
