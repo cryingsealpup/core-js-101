@@ -444,9 +444,17 @@ function getCommonDirectoryPath(pathes) {
  *
  */
 function getMatrixProduct(m1, m2) {
-  const getValue = (el, ind, arr2) => el * arr2[ind];
-
-  return typeof m1[0] !== 'object' ? m1.map((el, ind) => getValue(el, ind, m2)) : m1.map((v, i) => v.map((el, ind) => el * m2[i][ind]));
+  return m1.reduce((acc, curr, ind) => {
+    acc[ind] = [];
+    for (let j = 0; j < m2[0].length; j += 1) {
+      let sum = 0;
+      for (let k = 0; k < m1[0].length; k += 1) {
+        sum += m1[ind][k] * m2[k][j];
+      }
+      acc[ind][j] = sum;
+    }
+    return acc;
+  }, []);
 }
 
 
@@ -482,21 +490,18 @@ function getMatrixProduct(m1, m2) {
  */
 function evaluateTicTacToePosition(position) {
   const x = position;
-  const flag1 = x[0][0] === x[1][1] === x[2][2] || x[0][0] === x[1][0] === x[2][0];
-  const flag2 = x[0][1] === x[1][1] === x[2][1] || x[0][2] === x[1][2] === x[2][2];
-  const flag3 = x[0][2] === x[1][1] === x[2][0] || x[0][0] === x[0][1] === x[0][2];
-  // const counter = 0;
-  // position.forEach((el, ind) => {
-  //   el.forEach((val, i) => {
-
-  //   })
-  // })
-  // for (let i = 0; i <= position.length - 1; i += 1) {
-  //   for (let j = 0; j <= position[0].length - 1; j += 1) {
-
-  //   }
-  // }
-  return flag1 || flag2 || flag3 ? x[0][0] : undefined;
+  const f1 = (x[0][0] === x[1][1] && x[1][1] === x[2][2])
+  || (x[0][0] === x[1][0] && x[1][0] === x[2][0]);
+  const f2 = (x[0][1] === x[1][1] && x[1][1] === x[2][1])
+  || (x[0][0] === x[0][1] && x[0][1] === x[0][2]);
+  const f3 = (x[0][2] === x[1][1] && x[1][1] === x[2][0])
+  || (x[0][2] === x[1][2] && x[1][2] === x[2][2]);
+  const val1 = f1 ? x[0][0] : undefined;
+  const val2 = f2 ? x[0][1] : undefined;
+  const val3 = f3 ? x[0][2] : undefined;
+  const val4 = x[1][0] === x[1][1] && x[1][1] === x[1][2] ? x[1][0] : undefined;
+  const val5 = x[2][0] === x[2][1] && x[2][1] === x[2][2] ? x[2][0] : undefined;
+  return val1 || val2 || val3 || val4 || val5 || undefined;
 }
 
 
